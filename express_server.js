@@ -28,11 +28,12 @@ app.get("/", (req, res) => {
 app.get("/urls", (req, res) => {
   res.render("urls_index", {
     urls: urlDatabase,
+    ...req.cookies,
   });
 });
 
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+  res.render("urls_new", { ...req.cookies });
 });
 
 app.get("/urls/:shortURL", (req, res) => {
@@ -40,6 +41,7 @@ app.get("/urls/:shortURL", (req, res) => {
     const templateVars = {
       shortURL: req.params.shortURL,
       longURL: urlDatabase[req.params.shortURL],
+      ...req.cookies,
     };
     res.render("urls_show", templateVars);
   } else {
@@ -52,8 +54,14 @@ app.get("/u/:shortURL", (req, res) => {
     const longURL = urlDatabase[req.params.shortURL];
     res.redirect(longURL);
   } else {
-    res.render("urls_error");
+    res.render("urls_error", { ...req.cookies });
   }
+});
+
+app.post("/login", (req, res) => {
+  let templateVars = { ...req.cookies };
+  res.cookie("username", req.body.username);
+  res.render("urls_index", templateVars);
 });
 
 app.post("/urls", (req, res) => {
