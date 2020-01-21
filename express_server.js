@@ -1,11 +1,14 @@
 const express = require("express");
+const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
+const randomatic = require("randomatic");
+
 const app = express();
 const PORT = 8080; // default port 8080
 
-const bodyParser = require("body-parser");
+app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-const randomatic = require("randomatic");
 const generateRandomString = () => randomatic("aA0", 6);
 
 const urlDatabase = {
