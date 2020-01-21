@@ -35,11 +35,15 @@ app.get("/urls/new", (req, res) => {
 })
 
 app.get("/urls/:shortURL", (req, res) => {
-  const templateVars = { 
-    shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL]
-  };
-  res.render('urls_show', templateVars);
+  if (req.params.shortURL && urlDatabase[req.params.shortURL]) {
+    const templateVars = { 
+      shortURL: req.params.shortURL,
+      longURL: urlDatabase[req.params.shortURL]
+    };
+    res.render('urls_show', templateVars);    
+  } else {    
+    res.render('urls_error');    
+  }
 })
 
 app.get("/u/:shortURL", (req, res) => {  
@@ -47,8 +51,7 @@ app.get("/u/:shortURL", (req, res) => {
     const longURL = urlDatabase[req.params.shortURL]
     res.redirect(longURL);
   } else {
-    res.status(404);    
-    res.send('URL not found');
+    res.render('urls_error');
   }
 })
 
