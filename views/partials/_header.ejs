@@ -20,14 +20,33 @@
         >
       </div>
     </div>
+
+    <% if (typeof username === 'string' && username) { %>
+    <form
+      method="POST"
+      action="/logout"
+      class="form-inline align-items-center"
+    >
+      <p class="mb-0 mr-2">Logged In As: <%= username %></p>
+      <button type="submit" class="btn btn-outline-dark ml-2">
+        Log Out
+      </button>
+    </form>
+    <% } else { %>
+    <form method="POST" action="/login" class="form-inline">
+      <label class="sr-only" for="username">Username</label>
+      <input
+        type="text"
+        name="username"
+        id="username"
+        placeholder="Username"
+        class="form-control"
+      />
+
+      <button type="submit" class="btn btn-outline-dark ml-2">
+        Log In
+      </button>
+    </form>
+    <% } %>
   </nav>
-
-  <%= username %>
-
-  <form method="POST" action="/login">
-    <label id="username">Username</label>
-    <input type="text" name="username" id="username" />
-
-    <button type="submit">Log In</button>
-  </form>
 </header>

@@ -22,7 +22,7 @@ const urlDatabase = {
 app.set("view engine", "ejs");
 
 app.get("/", (req, res) => {
-  res.send("Hello!");
+  res.redirect("/urls");
 });
 
 app.get("/urls", (req, res) => {
@@ -59,9 +59,16 @@ app.get("/u/:shortURL", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  let templateVars = { ...req.cookies };
-  res.cookie("username", req.body.username);
-  res.render("urls_index", templateVars);
+  if (req.body.username) {
+    let templateVars = { ...req.cookies, urls: urlDatabase };
+    res.cookie("username", req.body.username);
+    res.render("urls_index", templateVars);
+  }
+});
+
+app.post("/logout", (req, res) => {
+  res.clearCookie("username");
+  res.redirect("/urls");
 });
 
 app.post("/urls", (req, res) => {
