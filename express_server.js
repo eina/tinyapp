@@ -43,9 +43,13 @@ app.get("/urls/:shortURL", (req, res) => {
 })
 
 app.get("/u/:shortURL", (req, res) => {  
-  console.log(req.params)
-  const longURL = urlDatabase[req.params.shortURL]
-  res.redirect(longURL);  
+  if(req.params.shortURL && urlDatabase[req.params.shortURL]) {
+    const longURL = urlDatabase[req.params.shortURL]
+    res.redirect(longURL);
+  } else {
+    res.status(404);    
+    res.send('URL not found');
+  }
 })
 
 app.post("/urls", (req, res) => {

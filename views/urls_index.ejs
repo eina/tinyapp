@@ -12,16 +12,27 @@
 </head>
 <body>
   <%- include('partials/_header') %> 
-  <main>
-    <ul>
-      <% Object.keys(urls).forEach(url => {  %>
-      <li>
-        <span class="shortened"><%= url %></span>
-        <span class="full"><%= urls[url] %></span>
-      </li>
-      <% }); %>
-    </ul>
-    </main>
+<main style="margin: 1em;">
+    <h3>My URLs</h3>
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Short URL</th>
+          <th scope="col">Long URL</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% Object.keys(urls).forEach(url => {  %>
+          <tr>
+            <td>
+              <a href="/urls/<%= url %>">
+              <%= url %></a></td>
+            <td><%= urls[url] %></td>
+          </tr>          
+        <% }); %>        
+      </tbody>
+    </table>    
+  </main>
 
   <!-- Bootstrap JS -->
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
