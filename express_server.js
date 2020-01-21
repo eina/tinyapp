@@ -5,9 +5,15 @@ const PORT = 8080; // default port 8080
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: true }));
 
+const randomatic = require('randomatic');
+
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
+}
+
+function generateRandomString() {
+  return randomatic('aA0', 6);
 }
 
 // set view engine to ejs
