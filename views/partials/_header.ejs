@@ -21,13 +21,13 @@
       </div>
     </div>
 
-    <% if (typeof username === 'string' && username) { %>
+    <% if (typeof user === "object" && user) { %>
     <form
       method="POST"
       action="/logout"
       class="form-inline align-items-center"
     >
-      <p class="mb-0 mr-2">Logged In As: <%= username %></p>
+      <p class="mb-0 mr-2">Logged In As: <%= user.email %></p>
       <button type="submit" class="btn btn-outline-dark ml-2">
         Log Out
       </button>

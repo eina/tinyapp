@@ -26,11 +26,11 @@ const urlDatabase = {
 };
 
 const users = {
-  test: {
-    userId: "test",
-    email: "test@test.com",
-    password: "123456789",
-  },
+  // test: {
+  //   userId: "test",
+  //   email: "test@test.com",
+  //   password: "123456789",
+  // },
 };
 
 // set view engine to ejs
@@ -46,14 +46,15 @@ app.get("/register", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
+  console.log("what are you", users[req.cookies.user_id]);
   res.render("urls_index", {
     urls: urlDatabase,
-    ...req.cookies,
+    user: users[req.cookies.user_id],
   });
 });
 
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new", { ...req.cookies });
+  res.render("urls_new", { user: users[req.cookies.user_id] });
 });
 
 app.get("/urls/:shortURL", (req, res) => {
@@ -61,7 +62,7 @@ app.get("/urls/:shortURL", (req, res) => {
     const templateVars = {
       shortURL: req.params.shortURL,
       longURL: urlDatabase[req.params.shortURL],
-      ...req.cookies,
+      user: users[req.cookies.user_id],
     };
     res.render("urls_show", templateVars);
   } else {
@@ -74,7 +75,7 @@ app.get("/u/:shortURL", (req, res) => {
     const longURL = urlDatabase[req.params.shortURL];
     res.redirect(longURL);
   } else {
-    res.render("urls_error", { ...req.cookies });
+    res.render("urls_error", { user: users[req.cookies.user_id] });
   }
 });
 
@@ -84,7 +85,7 @@ app.post("/register", (req, res) => {
     res.status(400);
     res.send("Please fill out email and/or password");
   }
-  console.log("are the emails the same", checkEmail(email, users));
+
   if (checkEmail(email, users)) {
     res.status(400);
     res.send("Email already exists");
@@ -100,7 +101,10 @@ app.post("/register", (req, res) => {
 
 app.post("/login", (req, res) => {
   if (req.body.username) {
-    let templateVars = { ...req.cookies, urls: urlDatabase };
+    let templateVars = {
+      user: users[req.cookies.user_id],
+      urls: urlDatabase,
+    };
     // res.cookie("username", req.body.username);
     res.render("urls_index", templateVars);
   }
