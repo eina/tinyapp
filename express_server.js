@@ -45,6 +45,10 @@ app.get("/register", (req, res) => {
   res.render("urls_register", {});
 });
 
+app.get("/login", (req, res) => {
+  res.render("urls_login", {});
+});
+
 app.get("/urls", (req, res) => {
   console.log("what are you", users[req.cookies.user_id]);
   res.render("urls_index", {
