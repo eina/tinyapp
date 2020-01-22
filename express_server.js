@@ -11,13 +11,27 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 const generateRandomString = () => randomatic("aA0", 6);
 
+const checkEmail = (email, objRef) => {
+  for (const refId in objRef) {
+    console.log("what is this", objRef[refId].email, email);
+    return objRef[refId].email === email;
+  }
+  // return true;
+};
+
 const urlDatabase = {
   b2xVn2: "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com",
   // [generateRandomString()]: "https://eina.ca",
 };
 
-const users = {};
+const users = {
+  test: {
+    userId: "test",
+    email: "test@test.com",
+    password: "123456789",
+  },
+};
 
 // set view engine to ejs
 // app.set('views', './');
@@ -65,8 +79,19 @@ app.get("/u/:shortURL", (req, res) => {
 });
 
 app.post("/register", (req, res) => {
+  const { email, password } = req.body;
+  if (!email && !password) {
+    res.status(400);
+    res.send("Please fill out email and/or password");
+  }
+  console.log("are the emails the same", checkEmail(email, users));
+  if (checkEmail(email, users)) {
+    res.status(400);
+    res.send("Email already exists");
+  }
+
   const userId = generateRandomString();
-  users[userId] = { id: userId, ...req.body };
+  users[userId] = { id: userId, email, password };
   res.cookie("user_id", userId);
   console.log("user obj", users);
   console.log("cookies???", req.cookies);
