@@ -25,6 +25,10 @@ app.get("/", (req, res) => {
   res.redirect("/urls");
 });
 
+app.get("/register", (req, res) => {
+  res.render("urls_register", {});
+});
+
 app.get("/urls", (req, res) => {
   res.render("urls_index", {
     urls: urlDatabase,
