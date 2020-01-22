@@ -3,17 +3,18 @@
   <%- include('partials/_head') %>
   <body>
     <%- include('partials/_header') %>
-    <main style="margin: 1em;">
-      <h1>Login</h1>
+    <main
+      style="margin: 1em;"
+      class="row flex-column align-items-center"
+    >
+      <h1 class="mt-4 mb-4">Login</h1>
 
-      <form method="POST" action="/login">
-        <label for="email">Email</label>
-        <input type="email" name="email" id="email" />
+      <form method="POST" action="/login" class="mt-4 w-50">
+        <%- include('partials/_email-pw-fields') %>
 
-        <label for="password">Password</label>
-        <input type="password" name="password" id="password" />
-
-        <button type="submit">Login</button>
+        <button type="submit" class="btn btn-success mt-4">
+          Login
+        </button>
       </form>
     </main>
 
