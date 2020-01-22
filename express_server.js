@@ -90,6 +90,16 @@ app.get("/urls/new", (req, res) => {
   res.redirect("/login");
 });
 
+app.get("/u/:shortURL", (req, res) => {
+  console.log("hello", urlDatabase[req.params.shortURL]);
+  if (req.params.shortURL && urlDatabase[req.params.shortURL]) {
+    const longURL = urlDatabase[req.params.shortURL].longURL;
+    res.redirect(longURL);
+  } else {
+    res.render("urls_error", { user: users[req.cookies.user_id] });
+  }
+});
+
 app.get("/urls/:shortURL", (req, res) => {
   const { shortURL } = req.params;
   // check if user logged in has URLS
@@ -104,15 +114,6 @@ app.get("/urls/:shortURL", (req, res) => {
     res.render("urls_show", templateVars);
   } else {
     res.render("urls_show", { shortURL, longURL: "" });
-  }
-});
-
-app.get("/u/:shortURL", (req, res) => {
-  if (req.params.shortURL && urlDatabase[req.params.shortURL]) {
-    const longURL = urlDatabase[req.params.shortURL];
-    res.redirect(longURL);
-  } else {
-    res.render("urls_error", { user: users[req.cookies.user_id] });
   }
 });
 
