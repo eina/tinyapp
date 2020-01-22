@@ -17,6 +17,8 @@ const urlDatabase = {
   // [generateRandomString()]: "https://eina.ca",
 };
 
+const users = {};
+
 // set view engine to ejs
 // app.set('views', './');
 app.set("view engine", "ejs");
@@ -62,10 +64,19 @@ app.get("/u/:shortURL", (req, res) => {
   }
 });
 
+app.post("/register", (req, res) => {
+  const userId = generateRandomString();
+  users[userId] = { id: userId, ...req.body };
+  res.cookie("user_id", userId);
+  console.log("user obj", users);
+  console.log("cookies???", req.cookies);
+  res.redirect("/urls");
+});
+
 app.post("/login", (req, res) => {
   if (req.body.username) {
     let templateVars = { ...req.cookies, urls: urlDatabase };
-    res.cookie("username", req.body.username);
+    // res.cookie("username", req.body.username);
     res.render("urls_index", templateVars);
   }
 });
