@@ -11,13 +11,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 const generateRandomString = () => randomatic("aA0", 6);
 
-const checkEmail = (email, objRef) => {
-  for (const refId in objRef) {
-    console.log("what is this", objRef[refId].email, email);
-    return objRef[refId].email === email;
-  }
-};
-
 const grabObjFromEmail = (email, objRef) => {
   for (const refId in objRef) {
     if (objRef[refId].email === email) {
@@ -38,7 +31,22 @@ const users = {
     email: "test@test.com",
     password: "123456789",
   },
+  // XYcRTZ: {
+  //   id: "XYcRTZ",
+  //   email: "test1@test.com",
+  //   password: "123456789",
+  // },
 };
+
+/**
+ *
+ x  A user can register
+ x  A user cannot register with an email address that has already been used
+ x  A user can log in with a correct email/password
+ x  A user sees the correct information in the header
+ x A user cannot log in with an incorrect email/password
+ x  A user can log out
+ */
 
 // set view engine to ejs
 // app.set('views', './');
@@ -57,7 +65,7 @@ app.get("/login", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  console.log("what are you", users[req.cookies.user_id]);
+  // console.log("what are you", users[req.cookies.user_id]);
   res.render("urls_index", {
     urls: urlDatabase,
     user: users[req.cookies.user_id],
@@ -92,21 +100,27 @@ app.get("/u/:shortURL", (req, res) => {
 
 app.post("/register", (req, res) => {
   const { email, password } = req.body;
+  const doesEmailExist =
+    grabObjFromEmail(email, users) &&
+    grabObjFromEmail(email, users).email;
+
+  console.log({ email, password, doesEmailExist });
   if (!email && !password) {
     res.status(400);
     res.send("Please fill out email and/or password");
   }
 
-  if (checkEmail(email, users)) {
+  if (doesEmailExist) {
     res.status(400);
     res.send("Email already exists");
   }
 
   const userId = generateRandomString();
   users[userId] = { id: userId, email, password };
+
   res.cookie("user_id", userId);
   console.log("user obj", users);
-  console.log("cookies???", req.cookies);
+  // console.log("cookies???", req.cookies);
   res.redirect("/urls");
 });
 
@@ -126,14 +140,14 @@ app.post("/login", (req, res) => {
       user: userObj,
       urls: urlDatabase,
     };
-    console.log("hello???", userObj.id);
+    // console.log("hello???", userObj.id);
     res.cookie("user_id", userObj.id);
     res.render("urls_index", templateVars);
   }
 });
 
 app.post("/logout", (req, res) => {
-  res.clearCookie("username");
+  res.clearCookie("user_id");
   res.redirect("/urls");
 });
 
