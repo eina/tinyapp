@@ -33,6 +33,8 @@ const urlsForUser = userID => {
   return result;
 };
 
+// curl -X POST -i localhost:8080/urls/b6UTxQ/delete
+
 const urlDatabase = {
   b6UTxQ: { longURL: "https://www.tsn.ca", userID: "aJ48lW" },
   i3BoGr: { longURL: "https://www.google.ca", userID: "aJ48lW" },
@@ -174,8 +176,17 @@ app.post("/urls", (req, res) => {
 });
 
 app.post("/urls/:shortURL/delete", (req, res) => {
-  delete urlDatabase[req.params.shortURL];
-  return res.redirect("/urls");
+  // is the user logged in
+  const { shortURL } = req.params;
+  const userURLs = urlsForUser(req.cookies.user_id);
+  // does the logged in user own this shortURL
+  if (userURLs && userURLs[shortURL] && userURLs[shortURL].longURL) {
+    delete urlDatabase[shortURL];
+    return res.redirect("/urls");
+  } else {
+    return res.redirect("/urls");
+    // res.send(`couldn't delete anything for ${req.cookies.user_id}`);
+  }
 });
 
 app.post("/urls/:shortURL", (req, res) => {
