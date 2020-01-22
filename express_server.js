@@ -19,34 +19,38 @@ const grabObjFromEmail = (email, objRef) => {
   }
 };
 
+const isUserLoggedIn = cookie => users[cookie];
+
+const urlsForUser = userID => {
+  let result = {};
+
+  for (const refId in urlDatabase) {
+    if (urlDatabase[refId].userID === userID) {
+      result[refId] = { ...urlDatabase[refId] };
+    }
+  }
+
+  return result;
+};
+
 const urlDatabase = {
-  b2xVn2: "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com",
+  b6UTxQ: { longURL: "https://www.tsn.ca", userID: "aJ48lW" },
+  i3BoGr: { longURL: "https://www.google.ca", userID: "aJ48lW" },
   // [generateRandomString()]: "https://eina.ca",
 };
 
 const users = {
-  test: {
-    id: "test",
+  aJ48lW: {
+    id: "aJ48lW",
     email: "test@test.com",
     password: "123456789",
   },
-  // XYcRTZ: {
-  //   id: "XYcRTZ",
-  //   email: "test1@test.com",
-  //   password: "123456789",
-  // },
+  XYcRTZ: {
+    id: "XYcRTZ",
+    email: "test1@test.com",
+    password: "123456789",
+  },
 };
-
-/**
- *
- x  A user can register
- x  A user cannot register with an email address that has already been used
- x  A user can log in with a correct email/password
- x  A user sees the correct information in the header
- x A user cannot log in with an incorrect email/password
- x  A user can log out
- */
 
 // set view engine to ejs
 // app.set('views', './');
@@ -65,11 +69,15 @@ app.get("/login", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  console.log("what are you", users[req.cookies.user_id]);
-  res.render("urls_index", {
-    urls: urlDatabase,
-    user: users[req.cookies.user_id],
-  });
+  if (isUserLoggedIn(req.cookies.user_id)) {
+    const templateVars = {
+      urls: urlsForUser(req.cookies.user_id, urlDatabase),
+      user: users[req.cookies.user_id],
+    };
+    res.render("urls_index", templateVars);
+  } else {
+    res.render("urls_index", { urls: {}, user: "" });
+  }
 });
 
 app.get("/urls/new", (req, res) => {
@@ -81,15 +89,19 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.get("/urls/:shortURL", (req, res) => {
-  if (req.params.shortURL && urlDatabase[req.params.shortURL]) {
+  const { shortURL } = req.params;
+  // check if user logged in has URLS
+  const userURLs = urlsForUser(req.cookies.user_id);
+  // if the shortURL exists in that object
+  if (userURLs && shortURL && userURLs[shortURL]) {
     const templateVars = {
-      shortURL: req.params.shortURL,
-      longURL: urlDatabase[req.params.shortURL],
+      shortURL,
+      longURL: urlDatabase[shortURL].longURL,
       user: users[req.cookies.user_id],
     };
     res.render("urls_show", templateVars);
   } else {
-    res.render("urls_error");
+    res.render("urls_show", { shortURL, longURL: "" });
   }
 });
 
@@ -142,7 +154,7 @@ app.post("/login", (req, res) => {
   if (userObj && userObj.password === req.body.password) {
     let templateVars = {
       user: userObj,
-      urls: urlDatabase,
+      urls: urlsForUser(userObj.id, urlDatabase),
     };
     // console.log("hello???", userObj.id);
     res.cookie("user_id", userObj.id);

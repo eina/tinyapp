@@ -5,6 +5,9 @@
   <body>
     <%- include('partials/_header') %>
     <main>
+      <% if (!longURL) { %>
+      <p>Please <a href="/login">log in</a> to view this page</p>
+      <% } else { %>
       <div class="card text-center">
         <div class="card-header"></div>
         <div class="card-body">
@@ -34,6 +37,7 @@
           </form>
         </div>
       </div>
+      <% } %>
     </main>
 
     <%- include('partials/_footer') %>
