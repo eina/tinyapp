@@ -16,7 +16,14 @@ const checkEmail = (email, objRef) => {
     console.log("what is this", objRef[refId].email, email);
     return objRef[refId].email === email;
   }
-  // return true;
+};
+
+const grabObjFromEmail = (email, objRef) => {
+  for (const refId in objRef) {
+    if (objRef[refId].email === email) {
+      return objRef[refId];
+    }
+  }
 };
 
 const urlDatabase = {
@@ -26,11 +33,11 @@ const urlDatabase = {
 };
 
 const users = {
-  // test: {
-  //   userId: "test",
-  //   email: "test@test.com",
-  //   password: "123456789",
-  // },
+  test: {
+    id: "test",
+    email: "test@test.com",
+    password: "123456789",
+  },
 };
 
 // set view engine to ejs
@@ -104,12 +111,23 @@ app.post("/register", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  if (req.body.username) {
+  const userObj = grabObjFromEmail(req.body.email, users);
+  if (!userObj) {
+    res.status(403);
+    res.send("User not found");
+  }
+
+  if (userObj && userObj.password !== req.body.password) {
+    res.status(403);
+    res.send("Wrong password");
+  }
+  if (userObj && userObj.password === req.body.password) {
     let templateVars = {
-      user: users[req.cookies.user_id],
+      user: userObj,
       urls: urlDatabase,
     };
-    // res.cookie("username", req.body.username);
+    console.log("hello???", userObj.id);
+    res.cookie("user_id", userObj.id);
     res.render("urls_index", templateVars);
   }
 });
