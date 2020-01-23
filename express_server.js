@@ -195,7 +195,7 @@ app.put("/urls/:shortURL", (req, res) => {
 });
 
 // delete the url
-app.post("/urls/:shortURL/delete", (req, res) => {
+app.delete("/urls/:shortURL/delete", (req, res) => {
   // is the user logged in
   const { shortURL } = req.params;
   const userURLs = urlsForUser(req.session.user_id);
