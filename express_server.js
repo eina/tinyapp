@@ -36,7 +36,11 @@ app.get("/register", (req, res) => {
 });
 
 app.get("/login", (req, res) => {
-  res.render("urls_login", {});
+  if (req.session["user_id"]) {
+    res.redirect("/urls");
+  } else {
+    res.render("urls_login");
+  }
 });
 
 app.get("/urls", (req, res) => {
@@ -123,7 +127,6 @@ app.post("/register", (req, res) => {
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
   const userObj = getUserByEmail(email, users);
-  // const comparePassword = bcrypt.compareSync(password)
   if (!userObj) {
     res.status(403);
     res.send("User not found");
@@ -134,7 +137,6 @@ app.post("/login", (req, res) => {
       user: userObj,
       urls: urlsForUser(userObj.id, urlDatabase),
     };
-    // console.log("hello???", userObj.id);
     req.session["user_id"] = userObj.id;
     res.render("urls_index", templateVars);
   } else {
@@ -145,7 +147,6 @@ app.post("/login", (req, res) => {
 
 app.post("/logout", (req, res) => {
   req.session = null;
-  // res.clearCookie("user_id");
   res.redirect("/urls");
 });
 
@@ -165,7 +166,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   const { shortURL } = req.params;
   const userURLs = urlsForUser(req.session.user_id);
   // does the logged in user own this shortURL
-  if (userURLs && userURLs[shortURL] && userURLs[shortURL].longURL) {
+  if (userURLs && userURLs[shortURL]) {
     delete urlDatabase[shortURL];
     return res.redirect("/urls");
   } else {
