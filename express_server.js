@@ -1,6 +1,6 @@
 const express = require("express");
+const methodOverride = require("method-override");
 const bodyParser = require("body-parser");
-// const cookieParser = require("cookie-parser");
 const cookieSession = require("cookie-session");
 const bcrypt = require("bcrypt");
 const randomatic = require("randomatic");
@@ -10,6 +10,8 @@ const { getUserByEmail, urlsForUser } = require("./helper");
 
 const app = express();
 const PORT = 8080; // default port 8080
+
+app.use(methodOverride("_method"));
 
 app.use(
   cookieSession({
