@@ -5,6 +5,9 @@ const cookieSession = require("cookie-session");
 const bcrypt = require("bcrypt");
 const randomatic = require("randomatic");
 
+const { urlDatabase, users } = require("./data");
+const { getUserByEmail } = require("./helper");
+
 const app = express();
 const PORT = 8080; // default port 8080
 
@@ -18,48 +21,14 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 const generateRandomString = () => randomatic("aA0", 6);
 
-const grabObjFromEmail = (email, objRef) => {
-  for (const refId in objRef) {
-    if (objRef[refId].email === email) {
-      return objRef[refId];
-    }
-  }
-};
-
-const isUserLoggedIn = cookie => users[cookie];
-
 const urlsForUser = userID => {
   let result = {};
-
   for (const refId in urlDatabase) {
     if (urlDatabase[refId].userID === userID) {
       result[refId] = { ...urlDatabase[refId] };
     }
   }
-
   return result;
-};
-
-const urlDatabase = {
-  b6UTxQ: { longURL: "https://www.tsn.ca", userID: "aJ48lW" },
-  i3BoGr: { longURL: "https://www.google.ca", userID: "aJ48lW" },
-  // [generateRandomString()]: "https://eina.ca",
-};
-
-const users = {
-  aJ48lW: {
-    id: "aJ48lW",
-    email: "test@test.com",
-    password:
-      "$2b$10$ysCKgtd.BVyr61Mk9JuXU.3Jw86JnxKM3kSpD7vACi1ANtpLL6sc6",
-    // password: bcrypt.hashSync("123456789", 10),
-  },
-  XYcRTZ: {
-    id: "XYcRTZ",
-    email: "test1@test.com",
-    password:
-      "$2b$10$ysCKgtd.BVyr61Mk9JuXU.3Jw86JnxKM3kSpD7vACi1ANtpLL6sc6",
-  },
 };
 
 // set view engine to ejs
@@ -80,7 +49,7 @@ app.get("/login", (req, res) => {
 
 app.get("/urls", (req, res) => {
   const { user_id: sessionUserID } = req.session;
-  if (isUserLoggedIn(sessionUserID)) {
+  if (urlsForUser(sessionUserID, urlDatabase)) {
     const templateVars = {
       urls: urlsForUser(sessionUserID, urlDatabase),
       user: users[sessionUserID],
@@ -129,8 +98,8 @@ app.get("/urls/:shortURL", (req, res) => {
 app.post("/register", (req, res) => {
   const { email, password } = req.body;
   const doesEmailExist =
-    grabObjFromEmail(email, users) &&
-    grabObjFromEmail(email, users).email;
+    getUserByEmail(email, users) &&
+    getUserByEmail(email, users).email;
 
   console.log({ email, password, doesEmailExist });
   if (!email && !password) {
@@ -159,7 +128,7 @@ app.post("/register", (req, res) => {
 
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
-  const userObj = grabObjFromEmail(email, users);
+  const userObj = getUserByEmail(email, users);
   // const comparePassword = bcrypt.compareSync(password)
   if (!userObj) {
     res.status(403);
