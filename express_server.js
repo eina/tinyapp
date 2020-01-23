@@ -1,6 +1,7 @@
 const express = require("express");
 const methodOverride = require("method-override");
 const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
 const cookieSession = require("cookie-session");
 const bcrypt = require("bcrypt");
 const randomatic = require("randomatic");
@@ -13,15 +14,19 @@ const PORT = 8080; // default port 8080
 
 app.use(methodOverride("_method"));
 
+app.use(cookieParser());
+
 app.use(
   cookieSession({
     name: "session",
     keys: ["key1"],
   }),
 );
+
 app.use(bodyParser.urlencoded({ extended: true }));
 
-const generateRandomString = () => randomatic("aA0", 6);
+const generateRandomString = (length = 6) =>
+  randomatic("aA0", length);
 
 app.set("view engine", "ejs");
 
@@ -56,6 +61,7 @@ app.get("/urls", (req, res) => {
       urls: urlsForUser(sessionUserID),
       user: users[sessionUserID],
     };
+    res.cookie("visitorID", generateRandomString(36));
     res.render("urls_index", templateVars);
   } else {
     res.render("urls_index", { urls: {}, user: "" });
@@ -73,8 +79,11 @@ app.get("/urls/new", (req, res) => {
 
 // redirect to longURL
 app.get("/u/:shortURL", (req, res) => {
-  if (req.params.shortURL && urlDatabase[req.params.shortURL]) {
-    const longURL = urlDatabase[req.params.shortURL].longURL;
+  const { shortURL } = req.params;
+  if (shortURL && urlDatabase[shortURL]) {
+    const longURL = urlDatabase[shortURL].longURL;
+    urlDatabase[shortURL].totalVisit =
+      urlDatabase[shortURL].totalVisit + 1;
     res.redirect(longURL);
   } else {
     res.render("urls_error", { user: users[req.session.user_id] });
@@ -93,8 +102,8 @@ app.get("/urls/:shortURL", (req, res) => {
     if (urlObj[shortURL]) {
       const templateVars = {
         shortURL,
-        longURL: urlObj[shortURL].longURL,
         user: users[sessionID],
+        ...urlObj[shortURL],
       };
       res.render("urls_show", templateVars);
     } else {
