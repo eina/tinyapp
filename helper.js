@@ -1,3 +1,4 @@
+const { urlDatabase } = require("./data");
 /**
  * getUserByEmail: return object that has email provided
  * @param {string} email
@@ -11,6 +12,21 @@ const getUserByEmail = (email, objRef) => {
   }
 };
 
+/**
+ * urlsForUser: returns an object of urls that belong to the userID
+ * @param {string} userID
+ */
+const urlsForUser = userID => {
+  let result = {};
+  for (const refId in urlDatabase) {
+    if (urlDatabase[refId].userID === userID) {
+      result[refId] = { ...urlDatabase[refId] };
+    }
+  }
+  return result;
+};
+
 module.exports = {
   getUserByEmail,
+  urlsForUser,
 };

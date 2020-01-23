@@ -1,6 +1,7 @@
 const { assert } = require("chai");
 
-const { getUserByEmail } = require("../helper");
+const { getUserByEmail, urlsForUser } = require("../helper");
+const { urlDatabase } = require("../data");
 
 const users = {
   userRandomID: {
@@ -34,5 +35,18 @@ describe("getUsersByEmail", () => {
     const user = getUserByEmail("test@test.com", users);
 
     assert.strictEqual(user, undefined);
+  });
+});
+
+describe("urlsForUser", () => {
+  it("should return an object with URLS if given a valid ID", () => {
+    const result = urlsForUser("aJ48lW");
+
+    assert.deepInclude(urlDatabase, result);
+  });
+  it("should return an empty object if given an ID that doesn't exist", () => {
+    const result = urlsForUser("user2RandomID");
+
+    assert.deepInclude({}, result);
   });
 });

@@ -6,7 +6,7 @@ const bcrypt = require("bcrypt");
 const randomatic = require("randomatic");
 
 const { urlDatabase, users } = require("./data");
-const { getUserByEmail } = require("./helper");
+const { getUserByEmail, urlsForUser } = require("./helper");
 
 const app = express();
 const PORT = 8080; // default port 8080
@@ -20,16 +20,6 @@ app.use(
 app.use(bodyParser.urlencoded({ extended: true }));
 
 const generateRandomString = () => randomatic("aA0", 6);
-
-const urlsForUser = userID => {
-  let result = {};
-  for (const refId in urlDatabase) {
-    if (urlDatabase[refId].userID === userID) {
-      result[refId] = { ...urlDatabase[refId] };
-    }
-  }
-  return result;
-};
 
 // set view engine to ejs
 // app.set('views', './');
