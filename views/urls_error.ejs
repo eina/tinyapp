@@ -4,8 +4,13 @@
   <body>
     <%- include('partials/_header') %>
     <main style="margin: 1em;">
+      <% if (error && error.statusCode && error.message) { %>
+      <h1>Oops, a <%= error.statusCode %>!</h1>
+      <p><%= error.message %></p>
+      <% } else { %>
       <h1>Oops</h1>
       <p>Looks like that URL doesn't exist in the database.</p>
+      <% } %>
     </main>
 
     <%- include('partials/_footer') %>

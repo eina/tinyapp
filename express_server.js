@@ -101,19 +101,24 @@ app.get("/urls/:shortURL", (req, res) => {
 
 app.post("/register", (req, res) => {
   const { email, password } = req.body;
-  const doesEmailExist =
-    getUserByEmail(email, users) &&
-    getUserByEmail(email, users).email;
+  const doesEmailExist = getUserByEmail(email, users);
 
-  console.log({ email, password, doesEmailExist });
   if (!email && !password) {
-    res.status(400);
-    res.send("Please fill out email and/or password");
+    res.status(400).render("urls_error", {
+      error: {
+        statusCode: 400,
+        message: "Please fill out email and/or password",
+      },
+    });
   }
 
   if (doesEmailExist) {
-    res.status(400);
-    res.send("Email already exists");
+    res.status(400).render("urls_error", {
+      error: {
+        statusCode: 400,
+        message: "Email already exists",
+      },
+    });
   }
 
   const userId = generateRandomString();
@@ -123,7 +128,6 @@ app.post("/register", (req, res) => {
     password: bcrypt.hashSync(password, 10),
   };
 
-  console.log("user obj", users);
   req.session["user_id"] = userId;
   res.redirect("/urls");
 });
@@ -131,10 +135,6 @@ app.post("/register", (req, res) => {
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
   const userObj = getUserByEmail(email, users);
-  if (!userObj) {
-    res.status(403);
-    res.send("User not found");
-  }
 
   if (userObj && bcrypt.compareSync(password, userObj.password)) {
     let templateVars = {
@@ -144,8 +144,12 @@ app.post("/login", (req, res) => {
     req.session["user_id"] = userObj.id;
     res.render("urls_index", templateVars);
   } else {
-    res.status(403);
-    res.send("Wrong password");
+    res.status(403).render("urls_error", {
+      error: {
+        statusCode: 403,
+        message: "Could not find a user with that email/password.",
+      },
+    });
   }
 });
 
