@@ -34,8 +34,6 @@ const urlsForUser = userID => {
   return result;
 };
 
-// curl -X POST -i localhost:8080/urls/b6UTxQ/delete
-
 const urlDatabase = {
   b6UTxQ: { longURL: "https://www.tsn.ca", userID: "aJ48lW" },
   i3BoGr: { longURL: "https://www.google.ca", userID: "aJ48lW" },
@@ -46,12 +44,15 @@ const users = {
   aJ48lW: {
     id: "aJ48lW",
     email: "test@test.com",
-    password: "123456789",
+    password:
+      "$2b$10$ysCKgtd.BVyr61Mk9JuXU.3Jw86JnxKM3kSpD7vACi1ANtpLL6sc6",
+    // password: bcrypt.hashSync("123456789", 10),
   },
   XYcRTZ: {
     id: "XYcRTZ",
     email: "test1@test.com",
-    password: "123456789",
+    password:
+      "$2b$10$ysCKgtd.BVyr61Mk9JuXU.3Jw86JnxKM3kSpD7vACi1ANtpLL6sc6",
   },
 };
 
@@ -142,25 +143,22 @@ app.post("/register", (req, res) => {
     password: bcrypt.hashSync(password, 10),
   };
 
-  res.cookie("user_id", userId);
   console.log("user obj", users);
+  res.cookie("user_id", userId);
   // console.log("cookies???", req.cookies);
   res.redirect("/urls");
 });
 
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
-  const userObj = grabObjFromEmail(req.body.email, users);
+  const userObj = grabObjFromEmail(email, users);
+  // const comparePassword = bcrypt.compareSync(password)
   if (!userObj) {
     res.status(403);
     res.send("User not found");
   }
 
-  if (userObj && userObj.password !== req.body.password) {
-    res.status(403);
-    res.send("Wrong password");
-  }
-  if (userObj && userObj.password === req.body.password) {
+  if (userObj && bcrypt.compareSync(password, userObj.password)) {
     let templateVars = {
       user: userObj,
       urls: urlsForUser(userObj.id, urlDatabase),
@@ -168,6 +166,9 @@ app.post("/login", (req, res) => {
     // console.log("hello???", userObj.id);
     res.cookie("user_id", userObj.id);
     res.render("urls_index", templateVars);
+  } else {
+    res.status(403);
+    res.send("Wrong password");
   }
 });
 
