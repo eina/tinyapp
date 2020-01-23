@@ -32,7 +32,11 @@ app.get("/", (req, res) => {
 });
 
 app.get("/register", (req, res) => {
-  res.render("urls_register", {});
+  if (req.session["user_id"]) {
+    res.redirect("/urls");
+  } else {
+    res.render("urls_register");
+  }
 });
 
 app.get("/login", (req, res) => {
