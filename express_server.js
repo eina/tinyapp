@@ -21,12 +21,14 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 const generateRandomString = () => randomatic("aA0", 6);
 
-// set view engine to ejs
-// app.set('views', './');
 app.set("view engine", "ejs");
 
 app.get("/", (req, res) => {
-  res.redirect("/urls");
+  if (req.session.user_id) {
+    res.redirect("/urls");
+  } else {
+    res.redirect("/login");
+  }
 });
 
 app.get("/register", (req, res) => {
@@ -41,7 +43,7 @@ app.get("/urls", (req, res) => {
   const { user_id: sessionUserID } = req.session;
   if (urlsForUser(sessionUserID, urlDatabase)) {
     const templateVars = {
-      urls: urlsForUser(sessionUserID, urlDatabase),
+      urls: urlsForUser(sessionUserID),
       user: users[sessionUserID],
     };
     res.render("urls_index", templateVars);
