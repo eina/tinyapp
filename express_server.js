@@ -55,9 +55,9 @@ app.get("/urls", (req, res) => {
 app.get("/urls/new", (req, res) => {
   if (users[req.session.user_id]) {
     res.render("urls_new", { user: users[req.session.user_id] });
+  } else {
+    res.redirect("/login");
   }
-
-  res.redirect("/login");
 });
 
 app.get("/u/:shortURL", (req, res) => {
