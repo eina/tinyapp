@@ -60,6 +60,7 @@ app.get("/urls", (req, res) => {
   }
 });
 
+// add new link for tinyapp
 app.get("/urls/new", (req, res) => {
   if (users[req.session.user_id]) {
     res.render("urls_new", { user: users[req.session.user_id] });
@@ -68,6 +69,7 @@ app.get("/urls/new", (req, res) => {
   }
 });
 
+// redirect to longURL
 app.get("/u/:shortURL", (req, res) => {
   if (req.params.shortURL && urlDatabase[req.params.shortURL]) {
     const longURL = urlDatabase[req.params.shortURL].longURL;
@@ -97,6 +99,11 @@ app.get("/urls/:shortURL", (req, res) => {
       res.render("urls_error", { user: users[sessionID] });
     }
   }
+});
+
+// redirect any stray url request to urls
+app.get("*", (req, res) => {
+  res.redirect("/urls");
 });
 
 app.post("/register", (req, res) => {
@@ -136,6 +143,7 @@ app.post("/login", (req, res) => {
   const { email, password } = req.body;
   const userObj = getUserByEmail(email, users);
 
+  // if user with email exists + password is correct
   if (userObj && bcrypt.compareSync(password, userObj.password)) {
     let templateVars = {
       user: userObj,
@@ -158,6 +166,7 @@ app.post("/logout", (req, res) => {
   res.redirect("/urls");
 });
 
+// add a new URL to urlDatabase
 app.post("/urls", (req, res) => {
   const randomString = generateRandomString();
   const { longURL } = req.body;
@@ -166,20 +175,6 @@ app.post("/urls", (req, res) => {
     userID: req.session.user_id,
   };
   res.redirect(`urls/${randomString}`);
-});
-
-// delete the url
-app.post("/urls/:shortURL/delete", (req, res) => {
-  // is the user logged in
-  const { shortURL } = req.params;
-  const userURLs = urlsForUser(req.session.user_id);
-  // does the logged in user own this shortURL
-  if (userURLs && userURLs[shortURL]) {
-    delete urlDatabase[shortURL];
-    return res.redirect("/urls");
-  } else {
-    return res.redirect("/urls");
-  }
 });
 
 // update the url
@@ -194,6 +189,20 @@ app.post("/urls/:shortURL", (req, res) => {
     res.redirect(`/urls/${shortURL}`);
   } else {
     res.render("urls_error");
+  }
+});
+
+// delete the url
+app.post("/urls/:shortURL/delete", (req, res) => {
+  // is the user logged in
+  const { shortURL } = req.params;
+  const userURLs = urlsForUser(req.session.user_id);
+  // does the logged in user own this shortURL
+  if (userURLs && userURLs[shortURL]) {
+    delete urlDatabase[shortURL];
+    return res.redirect("/urls");
+  } else {
+    return res.redirect("/urls");
   }
 });
 
