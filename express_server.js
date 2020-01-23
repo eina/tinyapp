@@ -159,6 +159,7 @@ app.post("/urls", (req, res) => {
   res.redirect(`urls/${randomString}`);
 });
 
+// delete the url
 app.post("/urls/:shortURL/delete", (req, res) => {
   // is the user logged in
   const { shortURL } = req.params;
@@ -172,12 +173,19 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   }
 });
 
+// update the url
 app.post("/urls/:shortURL", (req, res) => {
   const { shortURL } = req.params;
   const { newURL } = req.body;
+  const { user_id: sessionID } = req.session;
+  const userURLs = urlsForUser(sessionID);
 
-  urlDatabase[shortURL].longURL = newURL;
-  return res.redirect(`/urls/${shortURL}`);
+  if (sessionID && userURLs && userURLs[shortURL]) {
+    urlDatabase[shortURL].longURL = newURL;
+    res.redirect(`/urls/${shortURL}`);
+  } else {
+    res.render("urls_error");
+  }
 });
 
 app.listen(PORT, () => {
