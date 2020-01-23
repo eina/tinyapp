@@ -23,11 +23,11 @@
             </td>
             <td><%= urls[url].longURL %></td>
             <td>
-              <a
-                href="/urls/<%= url %>"
-                class="btn btn-outline-primary"
-                >Edit</a
-              >
+              <form method="GET" action="/urls/<%= url %>">
+                <button type="submit" class="btn btn-outline-dark">
+                  Edit
+                </button>
+              </form>
             </td>
             <td>
               <form method="POST" action="/urls/<%= url %>/delete">
