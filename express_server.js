@@ -71,19 +71,24 @@ app.get("/u/:shortURL", (req, res) => {
 });
 
 app.get("/urls/:shortURL", (req, res) => {
-  const { shortURL } = req.params;
-  // check if user logged in has URLS
-  const userURLs = urlsForUser(req.session.user_id);
-  // if the shortURL exists in that object
-  if (userURLs && shortURL && userURLs[shortURL]) {
-    const templateVars = {
-      shortURL,
-      longURL: urlDatabase[shortURL].longURL,
-      user: users[req.session.user_id],
-    };
-    res.render("urls_show", templateVars);
+  const { user_id: sessionID } = req.session;
+  // if not logged in
+  if (!sessionID) {
+    res.render("urls_error");
   } else {
-    res.render("urls_show", { shortURL, longURL: "" });
+    const { shortURL } = req.params;
+    const urlObj = urlsForUser(sessionID);
+    // if user is logged in but it's not their short URL
+    if (urlObj[shortURL]) {
+      const templateVars = {
+        shortURL,
+        longURL: urlObj[shortURL].longURL,
+        user: users[sessionID],
+      };
+      res.render("urls_show", templateVars);
+    } else {
+      res.render("urls_error", { user: users[sessionID] });
+    }
   }
 });
 
