@@ -180,7 +180,7 @@ app.post("/urls", (req, res) => {
 });
 
 // update the url
-app.post("/urls/:shortURL", (req, res) => {
+app.put("/urls/:shortURL", (req, res) => {
   const { shortURL } = req.params;
   const { newURL } = req.body;
   const { user_id: sessionID } = req.session;

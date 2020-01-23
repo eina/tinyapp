@@ -19,7 +19,11 @@
         </div>
         <div class="card-footer text-muted pt-2 pb-3">
           <h2>Edit</h2>
-          <form class="form" method="POST" action="<%= shortURL %>">
+          <form
+            class="form"
+            method="POST"
+            action="<%= shortURL %>?_method=PUT"
+          >
             <div
               class="form-inline align-items-center justify-content-center"
             >
