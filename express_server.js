@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
+const bcrypt = require("bcrypt");
 const randomatic = require("randomatic");
 
 const app = express();
@@ -135,7 +136,11 @@ app.post("/register", (req, res) => {
   }
 
   const userId = generateRandomString();
-  users[userId] = { id: userId, email, password };
+  users[userId] = {
+    id: userId,
+    email,
+    password: bcrypt.hashSync(password, 10),
+  };
 
   res.cookie("user_id", userId);
   console.log("user obj", users);
@@ -144,6 +149,7 @@ app.post("/register", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
+  const { email, password } = req.body;
   const userObj = grabObjFromEmail(req.body.email, users);
   if (!userObj) {
     res.status(403);
