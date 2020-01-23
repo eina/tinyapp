@@ -113,8 +113,6 @@ app.post("/register", (req, res) => {
 
   console.log("user obj", users);
   req.session["user_id"] = userId;
-  // res.cookie("user_id", userId);
-  // console.log("cookies???", req.cookies);
   res.redirect("/urls");
 });
 
@@ -149,7 +147,11 @@ app.post("/logout", (req, res) => {
 
 app.post("/urls", (req, res) => {
   const randomString = generateRandomString();
-  urlDatabase[randomString] = req.body.longURL;
+  const { longURL } = req.body;
+  urlDatabase[randomString] = {
+    longURL,
+    userID: req.session.user_id,
+  };
   res.redirect(`urls/${randomString}`);
 });
 
