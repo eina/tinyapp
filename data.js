@@ -10,7 +10,6 @@ const users = {
     email: "test@test.com",
     password:
       "$2b$10$ysCKgtd.BVyr61Mk9JuXU.3Jw86JnxKM3kSpD7vACi1ANtpLL6sc6",
-    // password: bcrypt.hashSync("123456789", 10),
   },
   XYcRTZ: {
     id: "XYcRTZ",
