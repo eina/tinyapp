@@ -4,9 +4,9 @@ TinyApp is a full stack web application built with Node and Express that allows 
 
 ## Final Product
 
-!["View of URL Table"](./screenshots/url-table.png)
-!["View of URL Details"](./screenshots/url-details.png)
-!["View of Adding New URLs"](./screenshots/new-url.png)
+!["View of URL Table"](https://github.com/thelittleblacksmith/tinyapp/blob/master/docs/url-table.png)
+!["View of URL Details"](https://github.com/thelittleblacksmith/tinyapp/blob/master/docs/url-details.png)
+!["View of Adding New URLs"](https://github.com/thelittleblacksmith/tinyapp/blob/master/docs/new-url.png)
 
 ## Dependencies
 
