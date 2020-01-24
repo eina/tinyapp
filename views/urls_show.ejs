@@ -4,18 +4,19 @@
 
   <body>
     <%- include('partials/_header') %>
-    <main>
+    <main class="m-4 w-75 mx-auto">
       <% if (!longURL) { %>
       <p>Please <a href="/login">log in</a> to view this page</p>
       <% } else { %>
       <div class="card text-center">
-        <div class="card-header"></div>
-        <div class="card-body">
-          <h5 class="card-title">TinyURL for: <%= longURL %></h5>
+        <div class="card-header">
+          <h2 class="card-title">TinyURL for: <%= longURL %></h2>
           <p class="card-subtitle text-muted mb-4">
             Short URL:
             <a href="/u/<%= shortURL %>"><%= shortURL %></a>
           </p>
+        </div>
+        <div class="card-body">
           <div>
             <p class="card-text">
               Created: <%- created.toString() %>

@@ -3,7 +3,8 @@
   <%- include('partials/_head') %>
   <body>
     <%- include('partials/_header') %>
-    <main style="margin: 1em;">
+    <main class="m-4 w-75 mx-auto">
+      <!-- <main style="margin: 1em;"> -->
       <% if (error && error.statusCode && error.message) { %>
       <h1>Oops, a <%= error.statusCode %>!</h1>
       <p><%= error.message %></p>
