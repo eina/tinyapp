@@ -6,7 +6,7 @@ const cookieSession = require("cookie-session");
 const bcrypt = require("bcrypt");
 const randomatic = require("randomatic");
 
-const { urlDatabase, users } = require("./data");
+const { urlDatabase, users, visitDB } = require("./data");
 const { getUserByEmail, urlsForUser } = require("./helper");
 
 const app = express();
@@ -90,6 +90,16 @@ app.get("/u/:shortURL", (req, res) => {
     const { longURL, visitors, totalVisit } = urlObject;
     const isUnique = visitors.indexOf(req.cookies.visitor_id) < 0;
 
+    // track each visit
+    if (visitDB[shortURL]) {
+      visitDB[shortURL] = [
+        ...visitDB[shortURL],
+        { [req.cookies.visitor_id]: new Date() },
+      ];
+    } else {
+      visitDB[shortURL] = [{ [req.cookies.visitor_id]: new Date() }];
+    }
+
     // count total number of redirect clicks
     urlObject.totalVisit = totalVisit + 1;
     // set visitor cookie to track unique vists
@@ -116,6 +126,7 @@ app.get("/urls/:shortURL", (req, res) => {
       const templateVars = {
         shortURL,
         user: users[sessionID],
+        timestamps: visitDB[shortURL],
         ...urlObj[shortURL],
       };
       res.render("urls_show", templateVars);

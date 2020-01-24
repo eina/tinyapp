@@ -29,7 +29,13 @@ const users = {
   },
 };
 
+// track visitors
+const visitDB = {
+  b6UTxQ: [{ visitorID: "testUniqueVisitor", date: "test date" }],
+};
+
 module.exports = {
   urlDatabase,
   users,
+  visitDB,
 };
