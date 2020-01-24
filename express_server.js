@@ -215,7 +215,6 @@ app.post("/urls", (req, res) => {
     visitors: [],
   };
 
-  console.log("hi", urlDatabase);
   res.redirect(`urls/${randomString}`);
 });
 
