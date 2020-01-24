@@ -7,7 +7,11 @@ const bcrypt = require("bcrypt");
 const randomatic = require("randomatic");
 
 const { urlDatabase, users, visitDB } = require("./data");
-const { getUserByEmail, urlsForUser } = require("./helper");
+const {
+  getUserByEmail,
+  urlsForUser,
+  isLoggedIn,
+} = require("./helper");
 
 const app = express();
 const PORT = 8080; // default port 8080
@@ -37,7 +41,7 @@ app.get("/", (req, res) => {
     res.cookie("visitor_id", visitorCookie);
   }
 
-  if (req.session.user_id) {
+  if (isLoggedIn(req.session.user_id, urlDatabase)) {
     res.redirect("/urls");
   } else {
     res.redirect("/login");
@@ -45,7 +49,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/register", (req, res) => {
-  if (req.session["user_id"]) {
+  if (isLoggedIn(req.session.user_id, urlDatabase)) {
     res.redirect("/urls");
   } else {
     res.render("urls_register");
@@ -53,7 +57,7 @@ app.get("/register", (req, res) => {
 });
 
 app.get("/login", (req, res) => {
-  if (req.session["user_id"]) {
+  if (isLoggedIn(req.session.user_id, urlDatabase)) {
     res.redirect("/urls");
   } else {
     res.render("urls_login");

@@ -12,6 +12,12 @@ const getUserByEmail = (email, objRef) => {
   }
 };
 
+const isLoggedIn = (sessionID, objRef) => {
+  for (const refId in objRef) {
+    return objRef[refId].userID === sessionID;
+  }
+};
+
 /**
  * urlsForUser: returns an object of urls that belong to the userID
  * @param {string} userID
@@ -29,4 +35,5 @@ const urlsForUser = userID => {
 module.exports = {
   getUserByEmail,
   urlsForUser,
+  isLoggedIn,
 };
