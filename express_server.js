@@ -31,6 +31,12 @@ const generateRandomString = (length = 6) =>
 app.set("view engine", "ejs");
 
 app.get("/", (req, res) => {
+  // set visitor cookie if there's none
+  if (!req.cookies["visitor_id"]) {
+    const visitorCookie = generateRandomString(36);
+    res.cookie("visitor_id", visitorCookie);
+  }
+
   if (req.session.user_id) {
     res.redirect("/urls");
   } else {
@@ -61,7 +67,6 @@ app.get("/urls", (req, res) => {
       urls: urlsForUser(sessionUserID),
       user: users[sessionUserID],
     };
-    res.cookie("visitorID", generateRandomString(36));
     res.render("urls_index", templateVars);
   } else {
     res.render("urls_index", { urls: {}, user: "" });
@@ -81,9 +86,17 @@ app.get("/urls/new", (req, res) => {
 app.get("/u/:shortURL", (req, res) => {
   const { shortURL } = req.params;
   if (shortURL && urlDatabase[shortURL]) {
-    const longURL = urlDatabase[shortURL].longURL;
-    urlDatabase[shortURL].totalVisit =
-      urlDatabase[shortURL].totalVisit + 1;
+    const urlObject = urlDatabase[shortURL];
+    const { longURL, visitors, totalVisit } = urlObject;
+    const isUnique = visitors.indexOf(req.cookies.visitor_id) < 0;
+
+    // count total number of redirect clicks
+    urlObject.totalVisit = totalVisit + 1;
+    // set visitor cookie to track unique vists
+    if (isUnique) {
+      urlObject.visitors = [...visitors, req.cookies.visitor_id];
+    }
+
     res.redirect(longURL);
   } else {
     res.render("urls_error", { user: users[req.session.user_id] });

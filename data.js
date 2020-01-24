@@ -2,12 +2,14 @@ const urlDatabase = {
   b6UTxQ: {
     longURL: "https://www.tsn.ca",
     userID: "aJ48lW",
-    totalVisit: 0,
+    totalVisit: 1,
+    visitors: ["testUniqueVisitor"],
   },
   i3BoGr: {
     longURL: "https://www.google.ca",
     userID: "aJ48lW",
     totalVisit: 0,
+    visitors: [],
   },
   // [generateRandomString()]: "https://eina.ca",
 };
@@ -26,8 +28,6 @@ const users = {
       "$2b$10$ysCKgtd.BVyr61Mk9JuXU.3Jw86JnxKM3kSpD7vACi1ANtpLL6sc6",
   },
 };
-
-// const visited
 
 module.exports = {
   urlDatabase,
