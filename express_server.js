@@ -94,10 +94,12 @@ app.get("/u/:shortURL", (req, res) => {
     if (visitDB[shortURL]) {
       visitDB[shortURL] = [
         ...visitDB[shortURL],
-        { [req.cookies.visitor_id]: new Date() },
+        { visitorID: [req.cookies.visitor_id], date: new Date() },
       ];
     } else {
-      visitDB[shortURL] = [{ [req.cookies.visitor_id]: new Date() }];
+      visitDB[shortURL] = [
+        { visitorID: [req.cookies.visitor_id], date: new Date() },
+      ];
     }
 
     // count total number of redirect clicks
@@ -126,7 +128,7 @@ app.get("/urls/:shortURL", (req, res) => {
       const templateVars = {
         shortURL,
         user: users[sessionID],
-        timestamps: visitDB[shortURL],
+        timestamps: visitDB[shortURL] ? visitDB[shortURL] : [],
         ...urlObj[shortURL],
       };
       res.render("urls_show", templateVars);
@@ -208,7 +210,12 @@ app.post("/urls", (req, res) => {
   urlDatabase[randomString] = {
     longURL,
     userID: req.session.user_id,
+    totalVisit: 0,
+    created: new Date(),
+    visitors: [],
   };
+
+  console.log("hi", urlDatabase);
   res.redirect(`urls/${randomString}`);
 });
 

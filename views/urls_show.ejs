@@ -18,11 +18,16 @@
           </p>
           <div>
             <p class="card-text">
+              Created: <%- created.toString() %>
+            </p>
+            <p class="card-text">
               Total Visits: <%= totalVisit %>
             </p>
+            <% if (visitors) { %>
             <p class="card-text">
               Unique Visits: <%= visitors.length %>
             </p>
+            <% } %>
           </div>
 
           <div class="card w-75 mx-auto m-4 p-4">
@@ -50,6 +55,7 @@
           </div>
         </div>
         <div class="card-footer text-muted pt-2 pb-3">
+          <% if (timestamps.length) { %>
           <h3>Analytics</h3>
           <table class="table table-striped table-hover">
             <thead class="thead-dark">
@@ -69,6 +75,7 @@
               <% }) %>
             </tbody>
           </table>
+          <% } %>
         </div>
       </div>
       <% } %>

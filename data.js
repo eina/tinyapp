@@ -2,12 +2,14 @@ const urlDatabase = {
   b6UTxQ: {
     longURL: "https://www.tsn.ca",
     userID: "aJ48lW",
+    created: new Date("2020/01/20"),
     totalVisit: 1,
     visitors: ["testUniqueVisitor"],
   },
   i3BoGr: {
     longURL: "https://www.google.ca",
     userID: "aJ48lW",
+    created: new Date("2020/01/20"),
     totalVisit: 0,
     visitors: [],
   },
@@ -31,7 +33,7 @@ const users = {
 
 // track visitors
 const visitDB = {
-  b6UTxQ: [{ visitorID: "testUniqueVisitor", date: "test date" }],
+  b6UTxQ: [{ visitorID: "testUniqueVisitor", date: new Date() }],
 };
 
 module.exports = {
